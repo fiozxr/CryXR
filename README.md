@@ -47,7 +47,7 @@ Built using the **Web Crypto API (AES-256-GCM)** — it runs completely **client
 
 ## 🏷️ Credits
 
-Created by **[@fiozxr_](https://github.com/fiozxr)**  
+Created by **[@fiozxr_](https://instagram.com/fiozxr_)**  
 > “Your key, your data — private forever 🔒”
 
 ---
