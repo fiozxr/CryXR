@@ -9,6 +9,15 @@ Built using the **Web Crypto API (AES-256-GCM)** — it runs completely **client
 
 ---
 
+
+# Live Page 
+
+https://fiozxr.github.io/CryXR
+
+
+---
+
+
 ## 🚀 Features
 
 - 🔐 Encrypt and decrypt instantly  
