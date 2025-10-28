@@ -5,6 +5,8 @@ Built using the **Web Crypto API (AES-256-GCM)** — it runs completely **client
 
 ---
 
+<img width="1024" height="1024" alt="1000015047" src="https://github.com/user-attachments/assets/adbe4dc5-4a45-494c-8884-77849142a8c4" />
+
 ---
 
 ## 🚀 Features
@@ -33,15 +35,11 @@ Built using the **Web Crypto API (AES-256-GCM)** — it runs completely **client
 - CSS3 (responsive design)  
 - JavaScript (Web Crypto API - AES-256-GCM)
 
----
 
 ## 📸 Screenshots
 
-(You can add screenshots here later.)
-
----
-
-Then open your URL — no backend setup needed.
+![CryXR Screenshot](/images/screenshot1.png)
+![CryXR Screenshot](/images/screenshot2.png)
 
 ---
 
@@ -54,4 +52,4 @@ Created by **[@fiozxr_](https://github.com/fiozxr)**
 
 ## 🪪 License
 
-MIT License © 2025 **FIOZXR**by
+MIT License © 2025 **FIOZXR!!** 
