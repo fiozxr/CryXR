@@ -38,8 +38,10 @@ Built using the **Web Crypto API (AES-256-GCM)** — it runs completely **client
 
 ## 📸 Screenshots
 
-![CryXR Screenshot](/images/screenshot1.png)
-![CryXR Screenshot](/images/screenshot2.png)
+![CryXR Screenshot 1](/images/screenshot1.png)
+![CryXR Screenshot 2](/images/screenshot2.png)
+![CryXR Screenshot 3](/images/screenshot3.png)
+
 
 ---
 
