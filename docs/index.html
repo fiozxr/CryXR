@@ -1,0 +1,187 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CryXR - Encrypt & Decrypt Tool</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e3a8a);
+      color: #f1f5f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      transition: 0.3s ease;
+    }
+    h1 {
+      font-size: clamp(1.5rem, 5vw, 2.5rem);
+      margin-bottom: 10px;
+    }
+    h2 {
+      font-size: clamp(1.2rem, 4vw, 1.8rem);
+    }
+    .btn {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 14px 26px;
+      border-radius: 12px;
+      margin: 12px;
+      font-size: clamp(1rem, 3vw, 1.2rem);
+      cursor: pointer;
+      transition: 0.3s;
+      width: 80%;
+      max-width: 300px;
+    }
+    .btn:hover { background: #2563eb; }
+    .container {
+      display: none;
+      width: 90%;
+      max-width: 450px;
+      background: rgba(30, 41, 59, 0.9);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.5);
+    }
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      margin-top: 12px;
+      font-size: 1rem;
+      background: #0f172a;
+      color: #f8fafc;
+    }
+    textarea { resize: none; height: 100px; }
+    .result {
+      margin-top: 15px;
+      background: #0f172a;
+      padding: 12px;
+      border-radius: 10px;
+      word-wrap: break-word;
+      font-size: 0.9rem;
+    }
+    #home {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: fadeIn 0.5s ease;
+    }
+    .credit {
+      margin-top: 20px;
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+    .credit a {
+      color: #60a5fa;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .credit a:hover {
+      text-decoration: underline;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div id="home">
+    <h1>💠 CryXR</h1>
+    <h2>Encrypt & Decrypt Tool</h2>
+    <button class="btn" onclick="showPage('encrypt')">Encryption</button>
+    <button class="btn" onclick="showPage('decrypt')">Decryption</button>
+    <div class="credit">created by <a href="https://github.com/fiozxr" target="_blank">@fiozxr_</a></div>
+  </div>
+
+  <div id="encrypt" class="container">
+    <h2>Encryption</h2>
+    <input type="text" id="encKey" placeholder="Enter Key">
+    <textarea id="encText" placeholder="Enter text to encrypt..."></textarea>
+    <button class="btn" onclick="encryptText()">Encrypt</button>
+    <div id="encResult" class="result"></div>
+    <button class="btn" onclick="goHome()">⬅ Back</button>
+  </div>
+
+  <div id="decrypt" class="container">
+    <h2>Decryption</h2>
+    <input type="text" id="decKey" placeholder="Enter Key">
+    <textarea id="decText" placeholder="Enter encrypted text..."></textarea>
+    <button class="btn" onclick="decryptText()">Decrypt</button>
+    <div id="decResult" class="result"></div>
+    <button class="btn" onclick="goHome()">⬅ Back</button>
+  </div>
+  <script>
+    async function getKeyMaterial(password) {
+      const enc = new TextEncoder();
+      return crypto.subtle.importKey("raw", enc.encode(password), "PBKDF2", false, ["deriveKey"]);
+    }
+
+    async function getKey(keyMaterial, salt) {
+      return crypto.subtle.deriveKey(
+        { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
+        keyMaterial,
+        { name: "AES-GCM", length: 256 },
+        false,
+        ["encrypt", "decrypt"]
+      );
+    }
+
+    async function encryptText() {
+      const password = document.getElementById("encKey").value;
+      const text = document.getElementById("encText").value;
+      if (!password || !text) return alert("Please fill all fields!");
+
+      const enc = new TextEncoder();
+      const keyMaterial = await getKeyMaterial(password);
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const key = await getKey(keyMaterial, salt);
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, enc.encode(text));
+      const data = new Uint8Array([...salt, ...iv, ...new Uint8Array(encrypted)]);
+      const base64 = btoa(String.fromCharCode(...data));
+      document.getElementById("encResult").textContent = base64;
+    }
+
+    async function decryptText() {
+      const password = document.getElementById("decKey").value;
+      const dataB64 = document.getElementById("decText").value;
+      if (!password || !dataB64) return alert("Please fill all fields!");
+
+      const data = Uint8Array.from(atob(dataB64), (c) => c.charCodeAt(0));
+      const salt = data.slice(0, 16);
+      const iv = data.slice(16, 28);
+      const encData = data.slice(28);
+      const keyMaterial = await getKeyMaterial(password);
+      const key = await getKey(keyMaterial, salt);
+
+      try {
+        const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, encData);
+        const dec = new TextDecoder();
+        document.getElementById("decResult").textContent = dec.decode(decrypted);
+      } catch (e) {
+        document.getElementById("decResult").textContent = "❌ Invalid key or data!";
+      }
+    }
+
+    function showPage(id) {
+      document.getElementById("home").style.display = "none";
+      document.getElementById(id).style.display = "block";
+    }
+
+    function goHome() {
+      document.querySelectorAll(".container").forEach((el) => (el.style.display = "none"));
+      document.getElementById("home").style.display = "flex";
+    }
+  </script>
+
+
+</body></html>
